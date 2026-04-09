@@ -3,36 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>★유튜브 썸네일★</title>
+    <title>유튜브 썸네일 추출기 Pro</title>
     <style>
         :root {
             --primary-color: #ff0000;
             --bg-color: #f9f9f9;
+            --text-color: #333;
         }
-        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); text-align: center; padding: 20px; margin: 0; }
+        body { font-family: 'Pretendard', sans-serif; background-color: var(--bg-color); text-align: center; padding: 20px; margin: 0; color: var(--text-color); }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        h2 { color: #333; margin-bottom: 25px; }
         
-        .input-group { display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; }
-        input { flex: 1; max-width: 500px; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; outline: none; transition: border-color 0.3s; }
+        /* 💡 수정된 제목 스타일: 로고와 글자 정렬 */
+        .main-title { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 12px; /* 로고와 글자 사이 간격 */
+            margin-bottom: 30px; 
+            font-size: 26px;
+            font-weight: 800;
+        }
+        .main-title svg {
+            width: 32px; /* 로고 크기 */
+            height: 32px;
+        }
+        
+        .input-group { display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; flex-wrap: wrap; }
+        input { flex: 1; min-width: 280px; max-width: 500px; padding: 14px 18px; border: 2px solid #ddd; border-radius: 8px; outline: none; transition: border-color 0.3s; font-size: 15px; }
         input:focus { border-color: var(--primary-color); }
-        button.extract-btn { background: var(--primary-color); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        button.extract-btn { background: var(--primary-color); color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 15px; }
+        button.extract-btn:hover { background: #cc0000; }
         
-        /* 결과 카드 그리드 레이아웃 */
         #result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
-        .thumb-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 15px; transition: transform 0.2s; }
-        .thumb-card:hover { transform: translateY(-5px); }
-        .thumb-card img { width: 100%; border-radius: 8px; margin-bottom: 15px; }
-        .thumb-card h4 { margin: 10px 0; color: #555; font-size: 14px; }
+        .thumb-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 18px; transition: transform 0.2s, box-shadow 0.2s; }
+        .thumb-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .thumb-card img { width: 100%; border-radius: 8px; margin-bottom: 18px; }
+        .thumb-card h4 { margin: 10px 0; color: #555; font-size: 15px; }
         
-        .download-btn { display: inline-block; width: 100%; background: #333; color: white; text-decoration: none; padding: 10px 0; border-radius: 6px; font-size: 13px; cursor: pointer; border: none; }
+        .download-btn { display: inline-block; width: 100%; background: #333; color: white; text-decoration: none; padding: 12px 0; border-radius: 6px; font-size: 13px; cursor: pointer; border: none; font-weight: 600; }
         .download-btn:hover { background: #000; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>📸 유튜브 썸네일 추출기 Pro</h2>
+    <h2 class="main-title">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#FF0000">
+            <path d="M19.615 3.184c-3.604-.242-11.625-.242-15.23 0-3.897.262-4.385 2.807-4.385 8.816s.488 8.554 4.385 8.816c3.604.242 11.625.242 15.23 0 3.897-.262 4.385-2.807 4.385-8.816s-.488-8.554-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/>
+        </svg>
+        <span>유튜브 썸네일 추출기 Pro</span>
+    </h2>
+    
     <div class="input-group">
         <input type="text" id="videoUrl" placeholder="유튜브 영상 링크를 입력하세요 (예: https://youtu.be/...)">
         <button class="extract-btn" onclick="extractThumbnails()">추출하기</button>
@@ -57,7 +78,6 @@
         const grid = document.getElementById('result-grid');
         grid.innerHTML = ''; // 이전 결과 초기화
 
-        // 제공할 해상도 정보 (파일명, 라벨)
         const qualities = [
             { name: 'maxresdefault.jpg', label: '최고화질 (HD)', id: 'MAX' },
             { name: 'sddefault.jpg', label: '표준화질 (SD)', id: 'SD' },
@@ -79,7 +99,6 @@
         });
     }
 
-    // 크로스 도메인 이슈를 해결하여 이미지를 바로 다운로드하게 해주는 함수
     async function downloadImage(url, filename) {
         try {
             const response = await fetch(url);
